@@ -3,7 +3,6 @@ package com.client.socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Properties;
 
 public class StartUp {
 	private static final Logger logger = LogManager.getLogger(StartUp.class);

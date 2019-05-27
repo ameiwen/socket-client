@@ -2,6 +2,7 @@ package com.client.socket;
 
 import java.util.Calendar;
 
+import com.client.socket.client.KlineMessageReceiver;
 import com.client.socket.lib.WebSocketClient;
 import com.client.socket.utils.ProcessorUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;

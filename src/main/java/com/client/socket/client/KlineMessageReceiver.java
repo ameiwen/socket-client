@@ -1,4 +1,4 @@
-package com.client.socket;
+package com.client.socket.client;
 
 
 import com.client.socket.lib.WebSocketService;
@@ -11,6 +11,7 @@ public class KlineMessageReceiver implements WebSocketService {
 
     private static final Logger logger = LogManager.getLogger(KlineMessageReceiver.class);
 
+    @Override
     public void onReceive(String msg) {
         try {
             logger.info("rece:" + msg);
