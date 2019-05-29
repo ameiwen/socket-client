@@ -59,10 +59,6 @@ public abstract class WebSocketBase {
         this.isAlive = flag;
     }
 
-    public boolean getStatus(){
-        return this.isAlive;
-    }
-
     public void addChannel(String channel) {
         if (channel == null) {
             return;
