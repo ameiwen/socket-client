@@ -49,41 +49,45 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        Channel ch = ctx.channel();
-        monitor.updateTime();
-        //握手
-        if (!handShaker.isHandshakeComplete()) {
-            handShaker.finishHandshake(ch, (FullHttpResponse) msg);
-            handshakeFuture.setSuccess();
-            return;
-        }
-
-        if (msg instanceof FullHttpResponse) {
-            FullHttpResponse response = (FullHttpResponse) msg;
-            throw new IllegalStateException(
-                    "Unexpected FullHttpResponse (getStatus=" + response.status() +
-                            ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
-        }
-
-        WebSocketFrame frame = (WebSocketFrame) msg;
-        if (frame instanceof TextWebSocketFrame) {
-            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
-            System.out.println("TextWebSocketFrame receive:" + textFrame.text());
-            service.onReceive(textFrame.text());
-        } else if (frame instanceof BinaryWebSocketFrame) {
-            BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
-            String rs = uncompress(binaryFrame.content());
-            if(rs.contains("ping")) {
-                //log.info("send:" + str.replace("ping", "pong"));
-                ch.writeAndFlush(new TextWebSocketFrame(rs.replace("ping", "pong")));
+        try {
+            Channel ch = ctx.channel();
+            monitor.updateTime();
+            //握手
+            if (!handShaker.isHandshakeComplete()) {
+                handShaker.finishHandshake(ch, (FullHttpResponse) msg);
+                handshakeFuture.setSuccess();
+                return;
             }
-            service.onReceive(rs);
-        } else if (frame instanceof PongWebSocketFrame) {
-            System.out.println("WebSocket Client received pong");
-        } else if (frame instanceof CloseWebSocketFrame) {
-            monitor.updateStatus(false);
-            System.out.println("WebSocket Client received closing");
-            ch.close();
+
+            if (msg instanceof FullHttpResponse) {
+                FullHttpResponse response = (FullHttpResponse) msg;
+                throw new IllegalStateException(
+                        "Unexpected FullHttpResponse (getStatus=" + response.status() +
+                                ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
+            }
+
+            WebSocketFrame frame = (WebSocketFrame) msg;
+            if (frame instanceof TextWebSocketFrame) {
+                TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+                System.out.println("TextWebSocketFrame receive:" + textFrame.text());
+                service.onReceive(textFrame.text());
+            } else if (frame instanceof BinaryWebSocketFrame) {
+                BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
+                String rs = uncompress(binaryFrame.content());
+                if (rs.contains("ping")) {
+                    //log.info("send:" + str.replace("ping", "pong"));
+                    ch.writeAndFlush(new TextWebSocketFrame(rs.replace("ping", "pong")));
+                }
+                service.onReceive(rs);
+            } else if (frame instanceof PongWebSocketFrame) {
+                System.out.println("WebSocket Client received pong");
+            } else if (frame instanceof CloseWebSocketFrame) {
+                monitor.updateStatus(false);
+                System.out.println("WebSocket Client received closing");
+                ch.close();
+            }
+        }catch (Exception e){
+            e.getStackTrace();
         }
     }
 

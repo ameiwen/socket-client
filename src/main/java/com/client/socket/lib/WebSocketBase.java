@@ -231,11 +231,9 @@ class MonitorTask extends TimerTask {
 
     public void run() {
         if (System.currentTimeMillis() - startTime > checkTime) {
-            if (!this.client.getStatus()) {
-                log.info("start reconnect time:" + DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD_HH_MM_SS));
-                client.reConnect();
-                log.info("end reconnect time:" + DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD_HH_MM_SS));
-            }
+            log.info("start reconnect time:" + DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD_HH_MM_SS));
+            client.reConnect();
+            log.info("end reconnect time:" + DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD_HH_MM_SS));
         }
 //        client.sentPing();
         // log.info("Moniter ping data sent.... ");
